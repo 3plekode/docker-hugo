@@ -2,8 +2,8 @@ FROM debian:stretch
 
 # Install pygments (for syntax highlighting) 
 RUN apt-get -qq update \
-	&& DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends libstdc++6 python-pygments git ca-certificates asciidoc curl \
-	&& rm -rf /var/lib/apt/lists/*
+    && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends libstdc++6 python-pygments git ca-certificates asciidoc curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Configuration variables
 ENV HUGO_VERSION 0.58.3
@@ -16,6 +16,16 @@ RUN curl -sL -o /tmp/hugo.deb \
     dpkg -i /tmp/hugo.deb && \
     rm /tmp/hugo.deb && \
     mkdir ${SITE_DIR}
+
+# Install Go
+RUN \
+    mkdir -p /goroot && \
+    curl https://storage.googleapis.com/golang/go1.4.2.linux-amd64.tar.gz | tar xvzf - -C /goroot --strip-components=1
+
+# Set environment variables.
+ENV GOROOT /goroot
+ENV GOPATH /gopath
+ENV PATH $GOROOT/bin:$GOPATH/bin:$PATH
 
 WORKDIR ${SITE_DIR}
 
